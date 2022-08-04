@@ -49,7 +49,7 @@ class _QuizAppPageState extends State<QuizAppPage> {
   int userCorrectAnswer = 0;
   //Counts total questions
   int totalQuestion = 0;
-  //This checks the user answer with the correct answer.
+  //This checks the user answer with the correct answer
   void checkAnswer(bool userAnswer) {
     bool correctAnswer = quizBrain.getAnswer();
     setState(() {
