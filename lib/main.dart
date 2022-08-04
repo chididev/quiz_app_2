@@ -45,6 +45,10 @@ class QuizAppPage extends StatefulWidget {
 class _QuizAppPageState extends State<QuizAppPage> {
   //This keeps a record of user scores.
   List<Icon> scoreKeeper = [];
+  //Counts user correct answer
+  int userCorrectAnswer = 0;
+  //Counts total questions
+  int totalQuestion = 0;
   //This checks the user answer with the correct answer.
   void checkAnswer(bool userAnswer) {
     bool correctAnswer = quizBrain.getAnswer();
@@ -54,7 +58,7 @@ class _QuizAppPageState extends State<QuizAppPage> {
         Alert(
           context: context,
           type: AlertType.info,
-          title: 'ALERT',
+          title: 'You scored $userCorrectAnswer/$totalQuestion',
           desc: 'You\'ve reached the end of the quiz.',
           buttons: [
             DialogButton(
@@ -73,6 +77,7 @@ class _QuizAppPageState extends State<QuizAppPage> {
       } else {
         //Checks user answer with correct answer and updates the scoreKeeper.
         if (userAnswer == correctAnswer) {
+          userCorrectAnswer++;
           scoreKeeper.add(
             const Icon(
               Icons.check,
@@ -91,7 +96,7 @@ class _QuizAppPageState extends State<QuizAppPage> {
         }
       }
     });
-        }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,54 +115,44 @@ class _QuizAppPageState extends State<QuizAppPage> {
             ),
           ),
         ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.green,
-                primary: Colors.white,
-              ),
-              //User picked true
-              onPressed: () {
-                checkAnswer(true);
-                quizBrain.nextQuestion();
-              },
-              child: const Text(
-                'True',
-                style: TextStyle(
-                  fontSize: 25.0,
-                ),
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.red,
-                primary: Colors.white,
-              ),
-              //User picked false
-              onPressed: () {
-                checkAnswer(false);
-                quizBrain.nextQuestion();
-              },
-              child: const Text(
-                'False',
-                style: TextStyle(
-                  fontSize: 25.0,
-                ),
-              ),
-            ),
-          ),
-        ),
+        buildExpanded(
+            buttonColor: Colors.green, answerCheck: true, buttonText: 'True'),
+        buildExpanded(
+            buttonColor: Colors.red, answerCheck: false, buttonText: 'False'),
         Wrap(
           children: scoreKeeper,
         ),
       ],
+    );
+  }
+
+  //Builds out our expanded buttons.
+  Expanded buildExpanded(
+      {required Color buttonColor,
+      required bool answerCheck,
+      required String buttonText}) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: buttonColor,
+            primary: Colors.white,
+          ),
+          //User picked true
+          onPressed: () {
+            totalQuestion++;
+            checkAnswer(answerCheck);
+            quizBrain.nextQuestion();
+          },
+          child: Text(
+            buttonText,
+            style: const TextStyle(
+              fontSize: 25.0,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
